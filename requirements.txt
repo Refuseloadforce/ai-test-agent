@@ -1,0 +1,32 @@
+# AI GUI Test Agent 依赖
+
+# 屏幕截图
+mss>=9.0.1
+
+# 鼠标键盘控制
+pyautogui>=0.9.54
+pynput>=1.7.6
+
+# 视觉模型
+torch>=2.1.0
+transformers>=4.45.0
+accelerate>=0.26.0
+qwen-vl-utils>=0.0.8
+
+# AWQ 量化支持（二选一，看你的 CUDA 版本）
+# CUDA 12.x：
+autoawq>=0.2.6
+# CUDA 11.x：改用 auto-gptq
+
+# 图像处理
+Pillow>=10.0.0
+
+# 日志
+loguru>=0.7.0
+
+# 数据处理
+pydantic>=2.0.0
+
+# API 服务（可选）
+fastapi>=0.110.0
+uvicorn>=0.27.0
