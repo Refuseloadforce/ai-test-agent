@@ -1,10 +1,11 @@
-﻿# AI Config-Driven Desktop Automation Agent
+# AI Config-Driven Desktop Automation Agent
 
 [简体中文](README.md) | English
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Platform Windows](https://img.shields.io/badge/Platform-Windows%2010%2F11-lightgrey.svg)]()
+[![CI](https://github.com/Refuseloadforce/ai-test-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Refuseloadforce/ai-test-agent/actions)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 **Configure it, and it runs.** Everything — AI model, API key, execution parameters, task steps — lives in config files. Change the config, change the behavior; no code edits required.
