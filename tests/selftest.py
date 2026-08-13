@@ -1,4 +1,4 @@
-"""
+﻿"""
 自测脚本：验证核心链路，不操作真实电脑、不调用真实 API
   配置加载与校验 → 显式步骤执行 → AI 规划解析与执行 → 失败处理 → 报告生成
 
@@ -181,7 +181,7 @@ def test_ai_plan():
  {"action":"done","description":"完成"}]
 ```"""
     with tempfile.TemporaryDirectory() as tmp:
-        cfg = load_config(os.path.join(PROJECT_ROOT, "config", "config.json"), tmp)
+        cfg = load_config(os.path.join(PROJECT_ROOT, "config", "config.example.json"), tmp)
         fake = FakeLLM(plan_json)
         platform = FakePlatform()
         agent = make_agent(cfg, fake, platform)
@@ -241,7 +241,7 @@ def test_dry_run():
     import io
     from demo import preview
     with tempfile.TemporaryDirectory() as tmp:
-        cfg = load_config(os.path.join(PROJECT_ROOT, "config", "config.json"), tmp)
+        cfg = load_config(os.path.join(PROJECT_ROOT, "config", "config.example.json"), tmp)
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             preview(cfg)
