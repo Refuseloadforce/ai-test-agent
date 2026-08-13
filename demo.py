@@ -1,66 +1,87 @@
 """
-快速 Demo 入口
-运行前请先安装依赖：pip install -r requirements.txt
+AI 配置化桌面自动化 Agent - 入口
+
+用法：
+  python demo.py                             # 运行 config/config.json 中的所有任务
+  python demo.py --config config/xxx.json    # 运行指定配置文件
+  python demo.py --dry-run                   # 只预览将执行的步骤，不操作电脑
+
+配置说明：所有配置（AI 模型、密钥、执行参数、任务列表）都在配置文件里，
+改配置即可改行为，无需修改代码。
 """
 
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(__file__))
 
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 from loguru import logger
+from core.config import load_config
 from core.agent import TestAgent
 
 
-def demo_analyze():
-    """Demo 1: 只分析当前屏幕，不执行操作"""
-    logger.info("Demo: 分析当前屏幕")
+def preview(cfg: dict):
+    """预览配置中所有任务将执行的步骤（不操作电脑）"""
+    print("=" * 60)
+    print("DRY-RUN 预览（不会操作电脑）")
+    print("=" * 60)
+    tasks = cfg["tasks"]
+    for i, task in enumerate(tasks):
+        print(f"\n[{i + 1}/{len(tasks)}] {task['name']}")
+        steps = task.get("steps")
+        if steps:
+            print(f"  显式配置 {len(steps)} 步（直接执行，不经过 AI）:")
+            for j, s in enumerate(steps):
+                print(f"    {j + 1:2d}. [{s.get('action')}] {s.get('description', '')}")
+        else:
+            print(f"  自然语言任务（AI 规划）:")
+            print(f"    task: {task['task']}")
+            print(f"    → 将调用 DeepSeek ({cfg.get('llm', {}).get('model', 'deepseek-v4-flash')}) 规划步骤")
+        print("-" * 60)
+    print(f"\n共 {len(tasks)} 个任务。正式执行: python demo.py --config {cfg['_path']}")
+    print("⚠️  正式执行会控制鼠标键盘，鼠标移到屏幕左上角可紧急停止")
 
-    # 如果你有本地模型，改成本地路径，如：
-    # model_path = "D:/models/Qwen2-VL-7B-Instruct-AWQ"
-    model_path = "Qwen/Qwen2-VL-7B-Instruct-AWQ"
 
-    agent = TestAgent(model_path=model_path)
-    result = agent.quick_analyze("请描述当前屏幕上显示的内容，列出所有可见的界面元素")
-    print("\n=== AI 分析结果 ===")
-    print(result)
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="AI 配置化桌面自动化 Agent")
+    parser.add_argument("--config", default=None, help="配置文件路径（默认 config/config.json）")
+    parser.add_argument("--dry-run", action="store_true", help="只预览步骤，不操作电脑")
+    args = parser.parse_args()
 
+    project_root = os.path.dirname(os.path.abspath(__file__))
+    cfg = load_config(args.config, project_root)
 
-def demo_task():
-    """Demo 2: 执行一个完整任务（谨慎！会控制你的电脑）"""
-    logger.info("Demo: 执行自动化任务")
+    if args.dry_run:
+        preview(cfg)
+        return
 
-    model_path = "Qwen/Qwen2-VL-7B-Instruct-AWQ"
-    agent = TestAgent(model_path=model_path, max_steps=10)
+    print("[WARNING] 将控制你的鼠标和键盘！")
+    print("  鼠标移到屏幕左上角可紧急停止 (FAILSAFE)")
+    confirm = input("继续? (yes/no): ")
+    if confirm.lower() not in ("yes", "y"):
+        print("已取消")
+        return
 
-    # 修改为你想测试的任务
-    task = "打开记事本，输入 Hello World，然后保存文件"
+    agent = TestAgent(cfg)
+    results = agent.run_all()
 
-    result = agent.run(task)
-    print("\n=== 执行结果 ===")
-    print(f"状态: {result['status']}")
-    print(f"耗时: {result['duration']:.1f}s")
-    print(f"步数: {len(result['steps'])}")
-    for step in result['steps']:
-        action = step['action']
-        print(f"  Step {step['step']}: [{action.get('action')}] {action.get('description', '')}")
+    # 汇总
+    print("\n" + "=" * 60)
+    print("运行总结")
+    print("=" * 60)
+    success = sum(1 for r in results if r["status"] == "success")
+    print(f"任务: {success}/{len(results)} 成功")
+    print(f"运行目录: {agent.run_dir}/")
+    print(f"  summary.json - 运行总览")
+    print(f"  <任务>/report.json + report.md - 每个任务的详细报告")
+    print(f"  <任务>/*.png - 每步截图")
+    sys.exit(0 if success == len(results) else 1)
 
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="AI GUI Test Agent Demo")
-    parser.add_argument(
-        "--mode",
-        choices=["analyze", "task"],
-        default="analyze",
-        help="analyze=只分析屏幕, task=执行任务（会控制电脑）"
-    )
-    args = parser.parse_args()
-
-    if args.mode == "analyze":
-        demo_analyze()
-    else:
-        print("⚠️  警告：task 模式会自动控制你的鼠标和键盘！")
-        print("   鼠标移到屏幕左上角可紧急停止（pyautogui.FAILSAFE）")
-        confirm = input("确认继续？(yes/no): ")
-        if confirm.lower() == "yes":
-            demo_task()
+    main()

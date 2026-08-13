@@ -1,0 +1,38 @@
+{
+  "llm": {
+    "api_key": "",
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "temperature": 0.2,
+    "max_tokens": 4096
+  },
+  "browser": {
+    "chrome_path": "C:\\Users\\ch185\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe",
+    "debug_port": 9222,
+    "profile_dir": "{project_root}\\.chrome-profile",
+    "headless": false
+  },
+  "execution": {
+    "max_steps": 50,
+    "max_retries": 1,
+    "wait_after_action": 1.0,
+    "ai_plan": true,
+    "ai_replan": false,
+    "screenshot": true
+  },
+  "tasks": [
+    {
+      "name": "Chrome 打开 Bing 并搜索（CDP DOM 直控，无 OCR）",
+      "steps": [
+        { "action": "browser_open", "url": "https://cn.bing.com", "description": "启动 CDP 浏览器并打开必应" },
+        { "action": "browser_click", "selector": "#sb_form_q", "description": "点击搜索框（CSS 选择器定位）" },
+        { "action": "browser_type", "text": "DeepSeek V4 自动化测试", "description": "输入搜索词" },
+        { "action": "browser_press", "key": "Enter", "description": "回车提交搜索" },
+        { "action": "browser_wait_text", "text": "DeepSeek V4 自动化测试", "timeout": 25, "description": "验证结果页出现查询词（DOM 文本检测）" },
+        { "action": "browser_eval", "expr": "document.title", "description": "读取页面标题" },
+        { "action": "browser_eval", "expr": "document.querySelectorAll('#b_results > li').length", "description": "统计搜索结果条数" },
+        { "action": "done", "description": "任务完成" }
+      ]
+    }
+  ]
+}

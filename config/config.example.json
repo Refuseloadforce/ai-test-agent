@@ -1,0 +1,29 @@
+{
+  "llm": {
+    "api_key": "在此填入你的 DeepSeek API 密钥（或使用环境变量 DEEPSEEK_API_KEY）",
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "temperature": 0.2,
+    "max_tokens": 4096
+  },
+  "browser": {
+    "chrome_path": "",
+    "debug_port": 9222,
+    "profile_dir": "{project_root}\\.chrome-profile",
+    "headless": false
+  },
+  "execution": {
+    "max_steps": 50,
+    "max_retries": 2,
+    "wait_after_action": 0.8,
+    "ai_plan": true,
+    "ai_replan": true,
+    "screenshot": true
+  },
+  "tasks": [
+    {
+      "name": "示例任务：记事本输入并保存",
+      "task": "打开记事本，输入 Hello World，按 ctrl+s 保存到 {project_root}\\results\\hello.txt，保存后关闭记事本"
+    }
+  ]
+}

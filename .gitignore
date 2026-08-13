@@ -1,0 +1,42 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+# 运行结果
+results/
+
+# 截图缓存
+screenshots/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+aitestagent/
+
+# 密钥文件：config.json 内含 API 密钥，不提交
+# 新环境从 config/config.example.json 复制一份再填密钥
+config/config.json
+
+# CDP 测试浏览器用户目录
+.chrome-profile/
+
+# 通用
+*.log
+.env
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -18,8 +18,20 @@ pyautogui.PAUSE = 0.5       # 每次操作后暂停 0.5s，更稳定
 
 class DesktopPlatform:
     def __init__(self):
-        self.sct = mss.mss()
+        self.sct = mss.MSS()
         logger.info("Desktop platform initialized")
+
+    def _safe_premove(self):
+        """鼠标若停在屏幕角落（FAILSAFE 触发区），先移开，避免后续操作被熔断"""
+        try:
+            pyautogui.FAILSAFE = False
+            x, y = pyautogui.position()
+            w, h = pyautogui.size()
+            if (x <= 2 or x >= w - 3) and (y <= 2 or y >= h - 3):
+                pyautogui.moveTo(w // 2, max(100, h - 100))
+            pyautogui.FAILSAFE = True
+        except Exception:
+            pyautogui.FAILSAFE = True
 
     def screenshot(self, monitor_index: int = 1) -> Image.Image:
         """
@@ -54,9 +66,17 @@ class DesktopPlatform:
         self.click(x, y, button="right")
 
     def type_text(self, text: str, interval: float = 0.05):
-        """输入文字"""
+        """输入文字（支持中文和特殊字符）"""
         logger.info(f"Type: {text[:50]}{'...' if len(text) > 50 else ''}")
-        pyautogui.write(text, interval=interval)
+        try:
+            # 优先使用 pyperclip + ctrl+v，支持中文和特殊字符
+            import pyperclip
+            pyperclip.copy(text)
+            pyautogui.hotkey('ctrl', 'v')
+            time.sleep(0.1)  # 等待粘贴完成
+        except ImportError:
+            # 回退到 pyautogui.write（不支持中文）
+            pyautogui.write(text, interval=interval)
 
     def hotkey(self, *keys):
         """按下快捷键，如 hotkey('ctrl', 'c')"""
@@ -130,3 +150,23 @@ class DesktopPlatform:
     def get_screen_size(self) -> tuple:
         """获取屏幕分辨率"""
         return pyautogui.size()
+
+    def focus_window(self, title: str) -> bool:
+        """
+        按窗口标题（子串匹配）将窗口置前（恢复最小化）
+        :return: 是否找到并激活
+        """
+        wins = pyautogui.getWindowsWithTitle(title)
+        if not wins:
+            logger.warning(f"找不到窗口: {title}")
+            return False
+        win = wins[0]
+        try:
+            if win.isMinimized:
+                win.restore()
+            win.activate()
+            logger.info(f"窗口置前: {win.title}")
+            return True
+        except Exception as e:
+            logger.warning(f"窗口置前失败: {e}")
+            return False

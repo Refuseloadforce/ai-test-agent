@@ -1,0 +1,38 @@
+{
+  "llm": {
+    "api_key": "",
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "temperature": 0.2,
+    "max_tokens": 4096
+  },
+  "browser": {
+    "chrome_path": "C:\\Users\\ch185\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe",
+    "debug_port": 9222,
+    "profile_dir": "{project_root}\\.chrome-profile",
+    "headless": false
+  },
+  "execution": {
+    "max_steps": 50,
+    "max_retries": 1,
+    "wait_after_action": 1.0,
+    "ai_plan": true,
+    "ai_replan": true,
+    "screenshot": true
+  },
+  "tasks": [
+    {
+      "name": "OCR 综合诊断示例",
+      "task": "在必应搜索 DeepSeek 并确认结果页出现",
+      "steps": [
+        { "action": "browser_open", "url": "https://cn.bing.com", "description": "打开必应" },
+        { "action": "browser_click", "selector": "#sb_form_q", "description": "点击搜索框" },
+        { "action": "browser_type", "text": "DeepSeek", "description": "输入搜索词" },
+        { "action": "ocr_analyze", "question": "当前页面处于什么状态？要完成必应搜索任务，下一步应该做什么？", "ask_ai": true, "description": "遇到不确定情况：OCR 读屏 + AI 综合判断下一步" },
+        { "action": "browser_press", "key": "Enter", "description": "按判断回车提交搜索" },
+        { "action": "browser_wait_text", "text": "DeepSeek", "timeout": 25, "description": "验证结果页出现查询词" },
+        { "action": "done", "description": "任务完成" }
+      ]
+    }
+  ]
+}

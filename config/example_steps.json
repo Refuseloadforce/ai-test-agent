@@ -1,0 +1,41 @@
+{
+  "llm": {
+    "api_key": "在此填入你的 DeepSeek API 密钥",
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "temperature": 0.2,
+    "max_tokens": 4096
+  },
+  "execution": {
+    "max_steps": 50,
+    "max_retries": 1,
+    "wait_after_action": 0.8,
+    "ai_plan": true,
+    "ai_replan": true,
+    "screenshot": true
+  },
+  "tasks": [
+    {
+      "name": "显式步骤示例：打开记事本输入并保存",
+      "description": "这是纯配置模式：配置什么就执行什么，不需要 AI，不消耗 API 额度",
+      "steps": [
+        { "action": "open", "program": "记事本", "description": "打开记事本" },
+        { "action": "wait", "seconds": 2, "description": "等待记事本启动" },
+        { "action": "type", "text": "Hello World", "description": "输入 Hello World" },
+        { "action": "hotkey", "keys": ["ctrl", "s"], "description": "打开保存对话框" },
+        { "action": "wait", "seconds": 1, "description": "等待保存对话框" },
+        { "action": "type", "text": "{project_root}\\results\\hello_steps.txt", "description": "输入保存路径" },
+        { "action": "hotkey", "keys": ["enter"], "description": "确认保存" },
+        { "action": "done", "description": "任务完成" }
+      ]
+    },
+    {
+      "name": "快捷键示例",
+      "steps": [
+        { "action": "hotkey", "keys": ["win", "d"], "description": "显示桌面" },
+        { "action": "wait", "seconds": 1, "description": "等待" },
+        { "action": "done", "description": "任务完成" }
+      ]
+    }
+  ]
+}
