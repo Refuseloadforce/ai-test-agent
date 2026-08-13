@@ -13,6 +13,11 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Windows 控制台默认 cp1252/GBK，中文输出会 UnicodeEncodeError（CI 上必崩）
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 from PIL import Image
 from loguru import logger
 from core.config import load_config, resolve_text
