@@ -20,7 +20,8 @@ requests>=2.31.0
 loguru>=0.7.0
 
 # Windows OCR (for click_text / wait_text actions; Windows only)
-winsdk>=1.0.0; platform_system == "Windows"
+# NOTE: winsdk only ships pre-releases (1.0.0bN) - keep the beta in the specifier
+winsdk>=1.0.0b1; platform_system == "Windows"
 
 # Browser control via Chrome DevTools Protocol (browser_* actions)
 websocket-client>=1.7.0
